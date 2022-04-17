@@ -1,5 +1,5 @@
 import torch
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, Subset
 import torchvision.transforms as transforms
 from torchvision4ad.datasets import MVTecAD
 
@@ -20,6 +20,8 @@ def main(opt):
                                                          [0.5, 0.5, 0.5])])
     mvtec_ad = MVTecAD(".", opt.dataset_name, train=True, transform=transform,
                        download=True)
+    if(opt.dataset_interval > -1):
+        mvtec_ad = Subset(mvtec_ad, range(opt.dataset_interval))
     train_dataloader = DataLoader(mvtec_ad, batch_size=opt.batch_size,
                                   shuffle=True)
 
@@ -66,8 +68,14 @@ if __name__ == "__main__":
                              "discriminator per iter")
     parser.add_argument("--sample_interval", type=int, default=400,
                         help="interval betwen image samples")
+    
     parser.add_argument("--seed", type=int, default=None,
                         help="value of a random seed")
+    
+    parser.add_argument("--dataset_interval", type=int, default=-1,
+                        help="subset of training dataset")
+    parser.add_argument("--diffaug", type=str, default="",
+                        help="diffaug policies")
     opt = parser.parse_args()
 
     main(opt)

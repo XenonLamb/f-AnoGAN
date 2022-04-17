@@ -2,7 +2,7 @@ import os
 import torch
 import torch.autograd as autograd
 from torchvision.utils import save_image
-
+from diff_augment import DiffAugment
 
 """
 These codes are:
@@ -63,7 +63,9 @@ def train_wgangp(opt, generator, discriminator,
 
             # Generate a batch of images
             fake_imgs = generator(z)
-
+            if opt.diffaug != "":
+                real_imgs = DiffAugment(real_imgs, opt.diffaug, channels_first=True)
+                fake_imgs = DiffAugment(fake_imgs, opt.diffaug, channels_first=True)
             # Real images
             real_validity = discriminator(real_imgs)
             # Fake images

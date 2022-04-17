@@ -2,7 +2,7 @@ import os
 import torch
 import torch.autograd as autograd
 from torchvision.utils import save_image
-from diff_augment import DiffAugment
+from fanogan.diff_augment import DiffAugment
 
 """
 These codes are:

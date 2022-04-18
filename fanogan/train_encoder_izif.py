@@ -1,6 +1,7 @@
 import os
 import torch
 import torch.nn as nn
+import torchvision.transforms.functional
 from torchvision.utils import save_image
 
 
@@ -37,6 +38,14 @@ def train_encoder_izif(opt, generator, discriminator, encoder,
 
             # Configure input
             real_imgs = imgs.to(device)
+            do_noise = torch.rand()
+            do_inp = torch.rand()
+            if opt.encoder_denoise_level>0.0 and do_noise>0.5:
+                in_imgs = real_imgs + torch.rand(real_imgs.size(), dtype=real_imgs.dtype, device=real_imgs.device)*opt.encoder_denoise_level
+            else:
+                in_imgs = real_imgs
+            if opt.encoder_inpainting and do_inp>0.5:
+                in_imgs = torchvision.transforms.functional.rgb_to_grayscale(in_imgs, num_output_channels=3)
 
             # ----------------
             #  Train Encoder
@@ -45,7 +54,7 @@ def train_encoder_izif(opt, generator, discriminator, encoder,
             optimizer_E.zero_grad()
 
             # Generate a batch of latent variables
-            z = encoder(real_imgs)
+            z = encoder(in_imgs)
 
             # Generate a batch of images
             fake_imgs = generator(z)

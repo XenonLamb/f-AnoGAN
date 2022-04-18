@@ -74,6 +74,10 @@ if __name__ == "__main__":
                         help="value of a random seed")
     parser.add_argument("--dataset_interval", type=int, default=-1,
                         help="subset of training dataset")
+    parser.add_argument("--encoder_denoise_level", type=float, default=0.0,
+                        help="gaussian noise level")
+    parser.add_argument("--encoder_inpainting", type=bool, default=False,
+                        help="perform inpainting task")
     opt = parser.parse_args()
 
     main(opt)

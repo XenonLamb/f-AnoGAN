@@ -68,6 +68,8 @@ if __name__ == "__main__":
                         help="rate of split for normal training data")
     parser.add_argument("--seed", type=int, default=None,
                         help="value of a random seed")
+    parser.add_argument("--diffaug", type=str, default="",
+                        help="diffaug policies")
     opt = parser.parse_args()
 
     main(opt)

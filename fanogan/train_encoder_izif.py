@@ -1,4 +1,6 @@
 import os
+import random
+
 import torch
 import torch.nn as nn
 import torchvision.transforms.functional
@@ -38,8 +40,8 @@ def train_encoder_izif(opt, generator, discriminator, encoder,
 
             # Configure input
             real_imgs = imgs.to(device)
-            do_noise = torch.rand()
-            do_inp = torch.rand()
+            do_noise = random.random()
+            do_inp = random.random()
             if opt.encoder_denoise_level>0.0 and do_noise>0.5:
                 in_imgs = real_imgs + torch.rand(real_imgs.size(), dtype=real_imgs.dtype, device=real_imgs.device)*opt.encoder_denoise_level
             else:

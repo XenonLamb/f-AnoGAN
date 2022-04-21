@@ -62,12 +62,18 @@ def train_encoder_izif(opt, generator, discriminator, encoder,
             fake_imgs = generator(z)
 
             # Real features
-            real_features = discriminator.forward_features(real_imgs)
+            if opt.aux_recon:
+                real_features = discriminator.forward_features(in_imgs)
+            else:
+                real_features = discriminator.forward_features(real_imgs)
             # Fake features
             fake_features = discriminator.forward_features(fake_imgs)
 
             # izif architecture
-            loss_imgs = criterion(fake_imgs, real_imgs)
+            if opt.aux_recon:
+                loss_imgs = criterion(fake_imgs, in_imgs)
+            else:
+                loss_imgs = criterion(fake_imgs, real_imgs)
             loss_features = criterion(fake_features, real_features)
             e_loss = loss_imgs + kappa * loss_features
 

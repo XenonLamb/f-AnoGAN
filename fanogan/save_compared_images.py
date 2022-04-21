@@ -1,7 +1,7 @@
 import os
 import torch
 from torchvision.utils import save_image
-
+import numpy as np
 
 def save_compared_images(opt, generator, encoder, dataloader, device):
     generator.load_state_dict(torch.load("results/generator"))
@@ -20,13 +20,17 @@ def save_compared_images(opt, generator, encoder, dataloader, device):
 
         compared_images = torch.empty(real_img.shape[0] * 3,
                                       *real_img.shape[1:])
+        #print(compared_images.shape)
         compared_images[0::3] = real_img
         compared_images[1::3] = fake_img
         compared_images[2::3] = real_img - fake_img
+        img_diff = real_img - fake_img
 
         save_image(compared_images.data,
                    f"results/images_diff/{opt.n_grid_lines*(i+1):06}.png",
                    nrow=3, normalize=True)
+        np.savez(f"results/images_diff/{opt.n_grid_lines * (i + 1):06}.npz",
+                   img_diff = img_diff)
 
         if opt.n_iters is not None and opt.n_iters == i:
             break

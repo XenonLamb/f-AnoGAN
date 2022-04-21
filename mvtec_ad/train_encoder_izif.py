@@ -78,6 +78,9 @@ if __name__ == "__main__":
                         help="gaussian noise level")
     parser.add_argument("--encoder_inpainting", type=bool, default=False,
                         help="perform inpainting task")
+    parser.add_argument("--aux_recon", action="store_true",
+                        help="perform recon objective for the auxiliary task")
+
     opt = parser.parse_args()
 
     main(opt)

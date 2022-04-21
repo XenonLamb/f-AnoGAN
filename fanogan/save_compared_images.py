@@ -29,6 +29,10 @@ def save_compared_images(opt, generator, encoder, dataloader, device):
         save_image(compared_images.data,
                    f"results/images_diff/{opt.n_grid_lines*(i+1):06}.png",
                    nrow=3, normalize=True)
+        np.savez(f"results/images_diff/{opt.n_grid_lines * (i + 1):06}_real.npz",
+                 img=real_img)
+        np.savez(f"results/images_diff/{opt.n_grid_lines * (i + 1):06}_fake.npz",
+                 img=real_img)
         np.savez(f"results/images_diff/{opt.n_grid_lines * (i + 1):06}.npz",
                    img_diff = img_diff)
 

@@ -22,7 +22,7 @@ def main(opt):
                        download=True)
     if(opt.dataset_interval > 0.0):
         subset_size = int(opt.dataset_interval* mvtec_ad.__len__())
-        mvtec_ad = Subset(mvtec_ad, range(opt.dataset_interval))
+        mvtec_ad = Subset(mvtec_ad, range(subset_size))
     train_dataloader = DataLoader(mvtec_ad, batch_size=opt.batch_size,
                                   shuffle=True)
 

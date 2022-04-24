@@ -36,6 +36,7 @@ def load_mnist(path, training_label=1, split_rate=0.8, download=True, train_rati
                                             dim=0)
     x_train = x_train[:subset_len]
     y_train = y_train[:subset_len]
+    print(len(x_train))
     x_test = torch.cat([x_test_normal,
                         train.data[train.targets != training_label],
                         test.data], dim=0)

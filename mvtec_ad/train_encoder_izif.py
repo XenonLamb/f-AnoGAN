@@ -20,8 +20,9 @@ def main(opt):
                                                          [0.5, 0.5, 0.5])])
     mvtec_ad = MVTecAD(".", opt.dataset_name, train=True, transform=transform,
                        download=True)
-    if (opt.dataset_interval > -1):
-        mvtec_ad = Subset(mvtec_ad, range(opt.dataset_interval))
+    if (opt.dataset_interval > 0.0):
+        subset_size = int(opt.dataset_interval * mvtec_ad.__len__())
+        mvtec_ad = Subset(mvtec_ad, range(subset_size))
     train_dataloader = DataLoader(mvtec_ad, batch_size=opt.batch_size,
                                   shuffle=True)
 
@@ -72,7 +73,7 @@ if __name__ == "__main__":
                         help="interval betwen image samples")
     parser.add_argument("--seed", type=int, default=None,
                         help="value of a random seed")
-    parser.add_argument("--dataset_interval", type=int, default=-1,
+    parser.add_argument("--dataset_interval", type=float, default=1.0,
                         help="subset of training dataset")
     parser.add_argument("--encoder_denoise_level", type=float, default=0.0,
                         help="gaussian noise level")

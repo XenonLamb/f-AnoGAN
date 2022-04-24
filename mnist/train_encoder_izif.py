@@ -74,7 +74,7 @@ if __name__ == "__main__":
                         help="subset of training dataset")
     parser.add_argument("--encoder_denoise_level", type=float, default=0.0,
                         help="gaussian noise level")
-    parser.add_argument("--encoder_inpainting", type=bool, default=False,
+    parser.add_argument("--encoder_inpainting", action="store_true",
                         help="perform inpainting task")
     parser.add_argument("--aux_recon", action="store_true",
                         help="perform recon objective for the auxiliary task")

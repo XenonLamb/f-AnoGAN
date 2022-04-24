@@ -14,7 +14,7 @@ def main(opt):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     (x_train, y_train), _ = load_mnist("dataset",
                                        training_label=opt.training_label,
-                                       split_rate=opt.split_rate)
+                                       split_rate=opt.split_rate, train_ratio=opt.dataset_interval)
     train_mnist = SimpleDataset(x_train, y_train,
                                 transform=transforms.Compose(
                                     [transforms.ToPILImage(),
@@ -70,6 +70,8 @@ if __name__ == "__main__":
                         help="value of a random seed")
     parser.add_argument("--diffaug", type=str, default="",
                         help="diffaug policies")
+    parser.add_argument("--dataset_interval", type=float, default=1.0,
+                        help="subset of training dataset")
     opt = parser.parse_args()
 
     main(opt)

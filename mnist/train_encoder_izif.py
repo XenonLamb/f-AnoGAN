@@ -14,7 +14,7 @@ def main(opt):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     (x_train, y_train), _ = load_mnist("dataset",
                                        training_label=opt.training_label,
-                                       split_rate=opt.split_rate)
+                                       split_rate=opt.split_rate, train_ratio=opt.dataset_interval)
     train_mnist = SimpleDataset(x_train, y_train,
                                 transform=transforms.Compose(
                                     [transforms.ToPILImage(),
@@ -70,6 +70,15 @@ if __name__ == "__main__":
                         help="rate of split for normal training data")
     parser.add_argument("--seed", type=int, default=None,
                         help="value of a random seed")
+    parser.add_argument("--dataset_interval", type=float, default=1.0,
+                        help="subset of training dataset")
+    parser.add_argument("--encoder_denoise_level", type=float, default=0.0,
+                        help="gaussian noise level")
+    parser.add_argument("--encoder_inpainting", type=bool, default=False,
+                        help="perform inpainting task")
+    parser.add_argument("--aux_recon", action="store_true",
+                        help="perform recon objective for the auxiliary task")
+
     opt = parser.parse_args()
 
     main(opt)

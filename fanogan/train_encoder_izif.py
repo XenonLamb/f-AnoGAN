@@ -5,7 +5,7 @@ import torch
 import torch.nn as nn
 import torchvision.transforms.functional
 from torchvision.utils import save_image
-
+from pytorch_msssim import ssim, ms_ssim, SSIM, MS_SSIM
 
 """
 These codes are:
@@ -76,6 +76,8 @@ def train_encoder_izif(opt, generator, discriminator, encoder,
                 loss_imgs = criterion(fake_imgs, real_imgs)
             loss_features = criterion(fake_features, real_features)
             e_loss = loss_imgs + kappa * loss_features
+            if opt.use_ssim > 0.0:
+                e_loss+= opt.use_ssim * ( 1 - ms_ssim( real_imgs, fake_imgs, data_range=1.0, size_average=True))
 
             e_loss.backward()
             optimizer_E.step()

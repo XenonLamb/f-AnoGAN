@@ -78,6 +78,8 @@ if __name__ == "__main__":
                         help="perform inpainting task")
     parser.add_argument("--aux_recon", action="store_true",
                         help="perform recon objective for the auxiliary task")
+    parser.add_argument("--use_ssim", type=float, default=0.0,
+                        help="add ssim loss to encoder training")
 
     opt = parser.parse_args()
 

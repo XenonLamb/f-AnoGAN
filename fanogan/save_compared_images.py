@@ -30,6 +30,9 @@ def save_compared_images(opt, generator, encoder, dataloader, device):
             blurrer = transforms.GaussianBlur((7, 7), (opt.gaussian_blur_sigma1, opt.gaussian_blur_sigma2))
             fake_imgd = blurrer(fake_img)
             real_imgd = blurrer(real_img)
+        else:
+            fake_imgd = fake_img
+            real_imgd = real_img
         img_diff = ((real_imgd - fake_imgd)**2).detach().cpu().numpy()
         img_diff = np.sum(img_diff, axis=1, keepdims=False)
 

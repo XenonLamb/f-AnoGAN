@@ -53,6 +53,12 @@ if __name__ == "__main__":
                         help="number of image channels")
     parser.add_argument("--n_iters", type=int, default=None,
                         help="value of stopping iterations")
+    parser.add_argument("--gaussian_blur", action="store_true",
+                        help="perform blur both images before scoring")
+    parser.add_argument("--gaussian_blur_sigma1", type=float, default=0.1,
+                        help="blur sigma1")
+    parser.add_argument("--gaussian_blur_sigma2", type=float, default=5,
+                        help="blur sigma2")
     opt = parser.parse_args()
 
     main(opt)

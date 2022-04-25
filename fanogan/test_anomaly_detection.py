@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 from torch.utils.model_zoo import tqdm
-
+from torchvision import transforms
 
 def test_anomaly_detection(opt, generator, discriminator, encoder,
                            dataloader, device, kappa=1.0):
@@ -25,7 +25,10 @@ def test_anomaly_detection(opt, generator, discriminator, encoder,
         real_z = encoder(real_img)
         fake_img = generator(real_z)
         fake_z = encoder(fake_img)
-
+        if(opt.gaussian_blur):
+            blurrer = transforms.GaussianBlur((7,7),(opt.gaussian_blur_sigma1, opt.gaussian_blur_sigma2))
+            fake_img = blurrer(fake_img)
+            real_img = blurrer(real_img)
         real_feature = discriminator.forward_features(real_img)
         fake_feature = discriminator.forward_features(fake_img)
 

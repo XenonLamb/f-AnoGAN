@@ -50,6 +50,12 @@ if __name__ == "__main__":
                         help="label for normal images")
     parser.add_argument("--split_rate", type=float, default=0.8,
                         help="rate of split for normal training data")
+    parser.add_argument("--gaussian_blur", action="store_true",
+                        help="perform blur both images before scoring")
+    parser.add_argument("--gaussian_blur_sigma1", type=float, default=0.1,
+                        help="blur sigma1")
+    parser.add_argument("--gaussian_blur_sigma2", type=float, default=5,
+                        help="blur sigma2")
     opt = parser.parse_args()
 
     main(opt)

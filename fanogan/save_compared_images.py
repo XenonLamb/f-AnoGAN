@@ -3,6 +3,7 @@ import torch
 from torchvision.utils import save_image
 import numpy as np
 import matplotlib.pyplot as plt
+from torchvision import transforms
 
 def save_compared_images(opt, generator, encoder, dataloader, device):
     generator.load_state_dict(torch.load("results/generator"))
@@ -25,7 +26,11 @@ def save_compared_images(opt, generator, encoder, dataloader, device):
         compared_images[0::3] = real_img
         compared_images[1::3] = fake_img
         compared_images[2::3] = real_img - fake_img
-        img_diff = ((real_img - fake_img)**2).detach().cpu().numpy()
+        if (opt.gaussian_blur):
+            blurrer = transforms.GaussianBlur((7, 7), (opt.gaussian_blur_sigma1, opt.gaussian_blur_sigma2))
+            fake_imgd = blurrer(fake_img)
+            real_imgd = blurrer(real_img)
+        img_diff = ((real_imgd - fake_imgd)**2).detach().cpu().numpy()
         img_diff = np.sum(img_diff, axis=1, keepdims=False)
 
         save_image(compared_images.data,

@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 from torch.utils.model_zoo import tqdm
 from torchvision import transforms
+from pytorch_msssim import ssim, ms_ssim, SSIM, MS_SSIM
 
 def test_anomaly_detection(opt, generator, discriminator, encoder,
                            dataloader, device, kappa=1.0):
@@ -36,6 +37,8 @@ def test_anomaly_detection(opt, generator, discriminator, encoder,
         img_distance = criterion(fake_img, real_img)
         loss_feature = criterion(fake_feature, real_feature)
         anomaly_score = img_distance + kappa * loss_feature
+        if opt.use_ssim > 0.0:
+            anomaly_score += opt.use_ssim * (1 - ssim(real_img, fake_img, data_range=1.0, size_average=True))
 
         z_distance = criterion(fake_z, real_z)
 

@@ -56,6 +56,8 @@ if __name__ == "__main__":
                         help="blur sigma1")
     parser.add_argument("--gaussian_blur_sigma2", type=float, default=5,
                         help="blur sigma2")
+    parser.add_argument("--use_ssim", type=float, default=0.0,
+                        help="add ssim loss in detection")
     opt = parser.parse_args()
 
     main(opt)

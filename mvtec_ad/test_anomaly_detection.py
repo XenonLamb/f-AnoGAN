@@ -3,7 +3,7 @@ from torch.utils.data import DataLoader
 import torchvision.transforms as transforms
 from torchvision4ad.datasets import MVTecAD
 import numpy as np
-#from fanogan.test_anomaly_detection import test_anomaly_detection
+# from fanogan.test_anomaly_detection import test_anomaly_detection
 from mvtecad_pytorch.dataset import MVTecADDataset
 from model import Generator, Discriminator, Encoder
 from sklearn.metrics import roc_auc_score
@@ -11,11 +11,17 @@ from torch.utils.model_zoo import tqdm
 import torch.nn as nn
 from pytorch_msssim import ssim, ms_ssim, SSIM, MS_SSIM
 
+
 def cal_pro_scores(masks, amaps):
     loc_np = np.asarray(amaps).flatten()
+
     mask_np = np.asarray(masks).flatten()
+    mask_np = np.where(mask_np > 0.5, 1, 0)
+    print(loc_np.shape, loc_np.dtype)
     PRO_score = roc_auc_score(mask_np, loc_np, max_fpr=0.3)
-    print("PRO Score: ",PRO_score )
+    print("PRO Score: ", PRO_score)
+
+
 def test_anomaly_detection(opt, generator, discriminator, encoder,
                            dataloader, device, kappa=1.0):
     generator.load_state_dict(torch.load("results/generator"))
@@ -39,15 +45,15 @@ def test_anomaly_detection(opt, generator, discriminator, encoder,
         real_z = encoder(real_img)
         fake_img = generator(real_z)
         fake_z = encoder(fake_img)
-        if(opt.gaussian_blur):
-            blurrer = transforms.GaussianBlur((7,7),(opt.gaussian_blur_sigma1, opt.gaussian_blur_sigma2))
+        if (opt.gaussian_blur):
+            blurrer = transforms.GaussianBlur((7, 7), (opt.gaussian_blur_sigma1, opt.gaussian_blur_sigma2))
             fake_img = blurrer(fake_img)
             real_img = blurrer(real_img)
         real_feature = discriminator.forward_features(real_img)
         fake_feature = discriminator.forward_features(fake_img)
-        pix_scores = torch.sum((real_img-fake_img)**2, 1)
-        #pix_scores -= pix_scores.min()
-        #pix_scores /= pix_scores.max()
+        pix_scores = torch.sum((real_img - fake_img) ** 2, 1)
+        # pix_scores -= pix_scores.min()
+        # pix_scores /= pix_scores.max()
         masks.append(mask.unsqueeze(0).detach().cpu().numpy())
         amaps.append(pix_scores.unsqueeze(0).detach().cpu().numpy())
         # Scores for anomaly detection
@@ -65,22 +71,24 @@ def test_anomaly_detection(opt, generator, discriminator, encoder,
 
     cal_pro_scores(masks, amaps)
 
+
 def main(opt):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-    transform = transforms.Compose([transforms.Resize([opt.img_size]*2),
-                                    #transforms.RandomHorizontalFlip(),
+    transform = transforms.Compose([transforms.Resize([opt.img_size] * 2),
+                                    # transforms.RandomHorizontalFlip(),
                                     transforms.ToTensor(),
+                                    transforms.Lambda(lambda x: x.repeat(3, 1, 1)),
                                     transforms.Normalize([0.5, 0.5, 0.5],
                                                          [0.5, 0.5, 0.5])])
     mask_transform = transforms.Compose([
         transforms.ToTensor(),
-        transforms.Resize([opt.img_size]*2)
+        transforms.Resize((opt.img_size, opt.img_size))
     ])
-    #mvtec_ad = MVTecAD(".", opt.dataset_name, train=False, transform=transform,
-     #                  download=True)
-    mvtec_ad = MVTecADDataset(root="./data", target=opt.dataset_name, transforms=transform, mask_transforms=mask_transform,
-                             train=False)
+    # mvtec_ad = MVTecAD(".", opt.dataset_name, train=False, transform=transform,
+    #                  download=True)
+    mvtec_ad = MVTecADDataset(root=".", target=opt.dataset_name, transforms=transform, mask_transforms=mask_transform,
+                              train=False)
     test_dataloader = DataLoader(mvtec_ad, batch_size=1, shuffle=False)
 
     generator = Generator(opt)
@@ -98,9 +106,9 @@ Licensed under MIT
 (https://github.com/eriklindernoren/PyTorch-GAN/blob/master/LICENSE)
 """
 
-
 if __name__ == "__main__":
     import argparse
+
     parser = argparse.ArgumentParser()
     parser.add_argument("dataset_name", type=str,
                         choices=MVTecAD.available_dataset_names,
